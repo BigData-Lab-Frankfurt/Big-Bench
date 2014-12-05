@@ -13,12 +13,85 @@ fi
 # write environment information into logfile
 logEnvInformation
 
+substituteVariablesInSqlFile () {
+
+  local _result_var="$1"
+  local sql_file="$2"
+
+  local sql_content=$(cat "$sql_file")
+  local sql_content_tmp=$sql_content
+
+  # detect and replace hiveconf and env variables
+  local variable_regex='(\$\{(hiveconf|env):([^\}]*)\})'
+
+  while [[ $sql_content_tmp =~ $variable_regex ]]; do
+
+    local variable_marker=${BASH_REMATCH[1]}
+    local variable_type=${BASH_REMATCH[2]}
+    local variable_name=${BASH_REMATCH[3]}
+
+    if [ "$variable_type" == "hiveconf" ]; then
+      # search for detected hiveconf variable in $COMBINED_PARAMS_FILE
+      local variable_value=$(cat "$COMBINED_PARAMS_FILE" | sed -ne "s/^.*set $variable_name=\([^;]*\).*$/\1/ip")
+
+      # if hiveconf was not found in $COMBINED_PARAMS_FILE search for it in $HIVE_PARAMS
+      if [ -z "$variable_value" ]; then
+        variable_value=$(echo "$HIVE_PARAMS" | sed -ne "s/^.*\-\-hiveconf $variable_name=\([^ ]*\).*$/\1/ip")
+      fi
+
+    elif [ "$variable_type" == "env" ]; then
+      # get value of environment variable
+      variable_value=$(eval "echo ${!variable_name}")
+    fi
+
+    # exit if variable value cloud not be determined
+    if [ -z "$variable_value" ]; then
+      echo "Value of variable $variable_marker not found."
+      return 1
+    fi
+
+    # replace variables with values in actual sql_content
+    sql_content=${sql_content//$variable_marker/$variable_value}
+
+    sql_content_tmp=${sql_content#*$variable_marker}
+  done
+
+  eval $_result_var=\$sql_content
+}
+
+substituteVariablesInAllSql () {
+
+  ### COMBINED PARAMS FILE ###
+
+  substituteVariablesInSqlFile "content_combined_params_file" "$COMBINED_PARAMS_FILE"
+  echo "$content_combined_params_file" > "$COMBINED_PARAMS_FILE"
+
+  ### QUERY FILE ###
+
+  # extract path of original query file from passed arguments
+  local query_file=$(echo "$PASSED_PARAMETERS" | sed 's/.*\-f *\(.*\.sql\).*/\1/')
+
+  substituteVariablesInSqlFile "content_query_file" "$query_file"
+  echo "$content_query_file" > "$MODIFIED_QUERY_FILE"
+
+  # set query file path to working query file
+  PASSED_PARAMETERS=$(echo "$PASSED_PARAMETERS" | sed "s|\-f .*\.sql|\-f $MODIFIED_QUERY_FILE|g")
+
+}
+
 runHiveCmd () {
   if [ "$BINARY" = "$SPARK_BINARY" ]
   then
     local HIVE_PARAMS="-v --driver-memory 2g --executor-memory 1g --master local[*] $HIVE_PARAMS"
   fi
-  "$BINARY" $HIVE_PARAMS -i "$COMBINED_PARAMS_FILE" "$@"
+
+  PASSED_PARAMETERS="$@"
+  if [ "$SUBSTITUTE_VARS" = true ]
+  then
+    substituteVariablesInAllSql
+  fi
+
+  "$BINARY" $HIVE_PARAMS -i "$COMBINED_PARAMS_FILE" $PASSED_PARAMETERS
 }
 
 buildCombinedParamsFile () {
@@ -347,11 +420,23 @@ then
   exit 1
 fi
 
+
+if [ "$SUBSTITUTE_VARS" = true ]
+then
+  MODIFIED_QUERY_FILE="`mktemp`"
+fi
+
 COMBINED_PARAMS_FILE="`mktemp`"
 if buildCombinedParamsFile
 then
   # run module
   "$RUN_METHOD" "$@"
+fi
+
+
+if [ "$SUBSTITUTE_VARS" = true ]
+then
+  rm -rf "$MODIFIED_QUERY_FILE"
 fi
 
 rm -rf "$COMBINED_PARAMS_FILE"

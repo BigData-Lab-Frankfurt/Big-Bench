@@ -53,6 +53,9 @@ export SPARK_BINARY="$SPARK_HOME/bin/spark-sql"
 export DEFAULT_BINARY="$HIVE_BINARY"
 #export DEFAULT_BINARY="$SPARK_BINARY"
 
+# substitute all hiveconf/env vars in sql files before executing binary
+export SUBSTITUTE_VARS=false
+
 ## ================================================================
 ##  /END/  ADAPT BELOW VARIABLES TO YOUR CLUSTER
 ## ================================================================
