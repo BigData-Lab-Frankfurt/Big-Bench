@@ -5,6 +5,8 @@
 -- Resources
 
 --Result  --------------------------------------------------------------------
+--fix execution error, see https://groups.google.com/d/msg/big-bench/QCbCjcblM5Q/McJD-HCaWEkJ
+set hive.auto.convert.join=false;
 --keep result human readable
 set hive.exec.compress.output=false;
 set hive.exec.compress.output;
