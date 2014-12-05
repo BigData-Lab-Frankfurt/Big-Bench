@@ -82,7 +82,7 @@ substituteVariablesInAllSql () {
 runHiveCmd () {
   if [ "$BINARY" = "$SPARK_BINARY" ]
   then
-    local HIVE_PARAMS="-v --driver-memory 2g --executor-memory 1g --master local[*] $HIVE_PARAMS"
+    local HIVE_PARAMS="--driver-memory 2g --executor-memory 1g --master local[*] $HIVE_PARAMS"
   fi
 
   PASSED_PARAMETERS="$@"
@@ -91,7 +91,7 @@ runHiveCmd () {
     substituteVariablesInAllSql
   fi
 
-  "$BINARY" $HIVE_PARAMS -i "$COMBINED_PARAMS_FILE" $PASSED_PARAMETERS
+  "$BINARY" $HIVE_PARAMS -i "$COMBINED_PARAMS_FILE" $PASSED_PARAMETERS -v
 }
 
 buildCombinedParamsFile () {
