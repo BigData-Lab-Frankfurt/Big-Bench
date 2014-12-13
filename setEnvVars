@@ -54,7 +54,7 @@ export DEFAULT_BINARY="$HIVE_BINARY"
 #export DEFAULT_BINARY="$SPARK_BINARY"
 
 # substitute all hiveconf/env vars in sql files before executing binary
-export SUBSTITUTE_VARS=false
+export SUBSTITUTE_VARS=true
 
 ## ================================================================
 ##  /END/  ADAPT BELOW VARIABLES TO YOUR CLUSTER

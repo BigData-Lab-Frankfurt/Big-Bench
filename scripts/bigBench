@@ -31,8 +31,13 @@ substituteVariablesInSqlFile () {
     local variable_name=${BASH_REMATCH[3]}
 
     if [ "$variable_type" == "hiveconf" ]; then
+      # search for detected hiveconf variable in passed sql file itself
+      local variable_value=$(cat "$sql_file" | sed -ne "s/^.*set $variable_name=\([^;]*\).*$/\1/ip")
+
       # search for detected hiveconf variable in $COMBINED_PARAMS_FILE
-      local variable_value=$(cat "$COMBINED_PARAMS_FILE" | sed -ne "s/^.*set $variable_name=\([^;]*\).*$/\1/ip")
+      if [ -z "$variable_value" ]; then
+        local variable_value=$(cat "$COMBINED_PARAMS_FILE" | sed -ne "s/^.*set $variable_name=\([^;]*\).*$/\1/ip")
+      fi
 
       # if hiveconf was not found in $COMBINED_PARAMS_FILE search for it in $HIVE_PARAMS
       if [ -z "$variable_value" ]; then
@@ -46,8 +51,7 @@ substituteVariablesInSqlFile () {
 
     # exit if variable value cloud not be determined
     if [ -z "$variable_value" ]; then
-      echo "Value of variable $variable_marker not found."
-      return 1
+      echo "WARNING: Value of variable $variable_marker not found. Variable could not be substituted."
     fi
 
     # replace variables with values in actual sql_content
