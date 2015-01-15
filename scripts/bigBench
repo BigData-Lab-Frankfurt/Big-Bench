@@ -86,7 +86,7 @@ substituteVariablesInAllSql () {
 runHiveCmd () {
   if [ "$BINARY" = "$SPARK_BINARY" ]
   then
-    local HIVE_PARAMS="--driver-memory 2g --executor-memory 1g --master local[*] $HIVE_PARAMS"
+    local HIVE_PARAMS="--driver-memory 4g --executor-memory 2g --master local[*] $HIVE_PARAMS"
   fi
 
   PASSED_PARAMETERS="$@"
