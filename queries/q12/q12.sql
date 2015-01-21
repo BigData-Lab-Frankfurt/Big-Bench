@@ -21,7 +21,7 @@ LEFT SEMI JOIN (
 JOIN item i ON c.wcs_item_sk = i.i_item_sk
 WHERE i.i_category IN (${hiveconf:q12_i_category_IN})
 AND c.wcs_user_sk IS NOT NULL
-CLUSTER BY c_date, c_time
+-- CLUSTER BY c_date, c_time
 ;
 
 
@@ -42,7 +42,7 @@ LEFT SEMI JOIN (
 JOIN item i ON ss.ss_item_sk = i.i_item_sk
 WHERE i.i_category IN (${hiveconf:q12_i_category_IN})
 AND ss.ss_customer_sk IS NOT NULL
-CLUSTER BY s_date, s_time
+-- CLUSTER BY s_date, s_time
 ;
 
 
