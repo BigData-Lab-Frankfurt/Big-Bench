@@ -48,7 +48,7 @@ export BIG_BENCH_hive_default_fileformat_source_table="ORC"
 export BIG_BENCH_hive_default_fileformat_result_table="TEXTFILE"
 
 export HIVE_BINARY="/usr/bin/hive"
-export SPARK_HOME="$HOME/spark"
+export SPARK_HOME="/home/user1/spark"
 export SPARK_BINARY="$SPARK_HOME/bin/spark-sql"
 export DEFAULT_BINARY="$HIVE_BINARY"
 #export DEFAULT_BINARY="$SPARK_BINARY"
