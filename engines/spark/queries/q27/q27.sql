@@ -27,10 +27,15 @@ STORED AS ${env:BIG_BENCH_hive_default_fileformat_result_table} LOCATION '${hive
 
 -- the real query part
 INSERT INTO TABLE ${hiveconf:RESULT_TABLE}
-SELECT find_company(pr_review_sk, pr_item_sk, pr_review_content) AS (pr_review_sk, pr_item_sk, company_name, review_sentence)
+-- workaround to get user function working with spark
+-- (see http://apache-spark-user-list.1001560.n3.nabble.com/Spark-SQL-Assigning-several-aliases-to-the-output-several-return-values-of-an-UDF-td21238.html)
+SELECT `result._c0` AS pr_review_sk, `result._c1` AS pr_item_sk, `result._c2` AS company_name, `result._c3` AS review_sentence
 FROM (
-  SELECT pr_review_sk, pr_item_sk, pr_review_content
-  FROM product_reviews
-  WHERE pr_item_sk = ${hiveconf:q27_pr_item_sk}
-) subtable
+  SELECT find_company(subtable.pr_review_sk,subtable.pr_item_sk,subtable.pr_review_content) AS return
+  FROM (
+    SELECT pr.pr_review_sk, pr.pr_item_sk, pr.pr_review_content
+    FROM product_reviews pr
+    WHERE pr.pr_item_sk = ${hiveconf:q27_pr_item_sk}
+  ) subtable
+) result
 ;

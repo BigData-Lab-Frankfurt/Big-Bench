@@ -28,6 +28,11 @@ STORED AS ${env:BIG_BENCH_hive_default_fileformat_result_table} LOCATION '${hive
 
 -- the real query part
 INSERT INTO TABLE ${hiveconf:RESULT_TABLE}
-SELECT extract_sentiment(pr_item_sk,pr_review_content) AS (pr_item_sk, review_sentence, sentiment, sentiment_word)
-FROM product_reviews
+-- workaround to get user function working with spark
+-- (see http://apache-spark-user-list.1001560.n3.nabble.com/Spark-SQL-Assigning-several-aliases-to-the-output-several-return-values-of-an-UDF-td21238.html)
+SELECT `result._c0` AS pr_item_sk, `result._c1` AS review_sentence, `result._c2` AS sentiment, `result._c3` AS sentiment_word
+FROM (
+  SELECT extract_sentiment(pr.pr_item_sk,pr.pr_review_content) AS return
+  FROM product_reviews pr
+) result
 ;

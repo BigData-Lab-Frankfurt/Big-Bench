@@ -100,14 +100,14 @@ INSERT INTO TABLE ${hiveconf:RESULT_TABLE}
 SELECT *
 FROM
 (
-  SELECT extract_sentiment(pr.pr_item_sk, pr.pr_review_content) AS (
-    pr_item_sk,
-    review_sentence,
-    sentiment,
-    sentiment_word
-  )
-  FROM product_reviews pr
-  LEFT SEMI JOIN ${hiveconf:TEMP_TABLE3} ri ON pr.pr_item_sk = ri.item
+  -- workaround to get user function working with spark
+  -- (see http://apache-spark-user-list.1001560.n3.nabble.com/Spark-SQL-Assigning-several-aliases-to-the-output-several-return-values-of-an-UDF-td21238.html)
+  SELECT `result._c0` AS pr_item_sk, `result._c1` AS review_sentence, `result._c2` AS sentiment, `result._c3` AS sentiment_word
+  FROM (
+    SELECT extract_sentiment(pr.pr_item_sk,pr.pr_review_content) AS return
+    FROM product_reviews pr
+    LEFT SEMI JOIN ${hiveconf:TEMP_TABLE3} ri ON pr.pr_item_sk = ri.item
+  ) result
 ) q19_tmp_sentiment
 WHERE q19_tmp_sentiment.sentiment = 'NEG ';
 
