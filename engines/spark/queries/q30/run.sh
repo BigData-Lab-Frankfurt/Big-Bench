@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+PY_FILE1="$BIG_BENCH_QUERIES_DIR/q30/reducer_q30.py"
+
+BINARY_PARAMS="$BINARY_PARAMS --files $PY_FILE1"
+
 query_run_main_method () {
 	QUERY_SCRIPT="$QUERY_DIR/$QUERY_NAME.sql"
 	if [ ! -r "$QUERY_SCRIPT" ]
