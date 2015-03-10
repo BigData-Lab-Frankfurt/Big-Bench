@@ -25,7 +25,7 @@ def npath(vals):
 			ready = 1
 			continue
 		
-		if ready == 1 and val[2] != '\N':
+		if ready == 1 and val[2] != 'null':
 			c_date = val[0]
 			sales_sk= val[2]
 			print "%s\t%s" % (c_date, sales_sk)

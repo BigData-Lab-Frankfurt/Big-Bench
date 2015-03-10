@@ -20,7 +20,7 @@ if __name__ == "__main__":
 	for line in sys.stdin:
 		ordernum, cat_id, cat = line.strip().split("\t")
 
-		if ordernum != '\N' :
+		if ordernum != 'null' :
 			if last_ordernum == ordernum :
 				vals.append((cat_id, cat))
 			else :

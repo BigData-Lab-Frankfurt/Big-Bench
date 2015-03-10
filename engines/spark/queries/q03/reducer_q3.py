@@ -9,10 +9,10 @@ def npath(vals):
 	last_viewed_item = -1
 	last_viewed_date = -1
 	for i in vals:
-		if i[2] == '\N' and i[1] != '\N':
+		if i[2] == 'null' and i[1] != 'null':
 			last_viewed_item = i[1]
 			last_viewed_date = i[0]
-		elif i[2] != '\N' and i[1] != '\N' and last_viewed_item > -1 and last_viewed_date >= (i[0]- days_param ) :
+		elif i[2] != 'null' and i[1] != 'null' and last_viewed_item > -1 and last_viewed_date >= (i[0]- days_param ) :
 			print "%s\t%s" % (last_viewed_item, i[1])
 			last_viewed_item = i[1]
 			last_viewed_date = i[0]
