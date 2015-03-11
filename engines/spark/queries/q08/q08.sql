@@ -38,7 +38,7 @@ FROM (
     q08_map_output.sales_sk,
     q08_map_output.wpt
   USING 'python q8_reducer.py ${hiveconf:q08_category}'
-  AS (s_date BIGINT, s_sk BIGINT)
+  AS (s_date, s_sk)
 ) q08npath
 ;
 
