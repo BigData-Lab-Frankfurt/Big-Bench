@@ -42,7 +42,7 @@ FROM (
   q03_map_output.lastviewed_sale
   --Reducer script selects only products viewed within 'q03_days_before_purchase' days before the purchase date
   USING 'python reducer_q3.py ${hiveconf:q03_days_before_purchase}'
-  AS (lastviewed_item BIGINT, purchased_item BIGINT)
+  AS (lastviewed_item, purchased_item)
 ) q03_nPath
 join item i on (i.i_item_sk = q03_nPath.lastviewed_item
   --Only products in certain categories

@@ -33,11 +33,11 @@ FROM (
     q04_tmp_map_output.tstamp
   USING 'python q4_reducer1.py ${hiveconf:q04_timeout}'
   AS (
-    uid    BIGINT,
-    item   BIGINT,
-    wptype STRING,
-    tstamp BIGINT,
-    sessionid STRING)
+    uid,
+    item,
+    wptype,
+    tstamp,
+    sessionid)
 ) q04_tmp_sessionize
 --ORDER BY uid, tstamp --ORDER BY is bad! total ordering ->only one reducer
 --LIMIT 2500
@@ -56,7 +56,7 @@ FROM (
     q04_tmp_map_output.wptype,
     q04_tmp_map_output.tstamp,
     q04_tmp_map_output.sessionid
-  USING 'python q4_reducer2.py' AS (sid STRING, start_s BIGINT, end_s BIGINT)
+  USING 'python q4_reducer2.py' AS (sid, start_s, end_s)
 ) q04_tmp_npath
 CLUSTER BY sid
 ;
