@@ -4,7 +4,8 @@
 --together in a transaction.
 
 -- Resources
-ADD FILE ${env:BIG_BENCH_QUERIES_DIR}/Resources/bigbenchqueriesmr.jar;
+ADD FILE ${hiveconf:QUERY_DIR}/Resources/bigbenchqueriesmr.jar;
+-- ADD FILE ${env:BIG_BENCH_QUERIES_DIR}/Resources/bigbenchqueriesmr.jar;
 
 --Result -------------------------------------------------------------------------
 --keep result human readable
