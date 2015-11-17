@@ -2,8 +2,8 @@
 --product in online store. Note that the order of products viewed does not matter.
 
 -- Resources
-ADD FILE ${hiveconf:QUERY_DIR}/Resources/bigbenchqueriesmr.jar;
--- ADD FILE ${env:BIG_BENCH_QUERIES_DIR}/Resources/bigbenchqueriesmr.jar;
+-- ADD FILE ${hiveconf:QUERY_DIR}/Resources/bigbenchqueriesmr.jar;
+ADD FILE ${env:BIG_BENCH_QUERIES_DIR}/Resources/bigbenchqueriesmr.jar;
 
 --Result -------------------------------------------------------------------------
 --keep result human readable
